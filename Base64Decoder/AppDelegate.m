@@ -1,0 +1,39 @@
+//
+//  Base64DecoderAppDelegate.m
+//  Base64Decoder
+//
+//  Created by Josh Barrow on 6/7/11.
+//  Copyright 2011 Jukaela Enterprises. All rights reserved.
+//
+
+#import "AppDelegate.h"
+#import "MainWindowController.h"
+
+@implementation AppDelegate
+
+@synthesize window;
+@synthesize mainWindowController;
+
+- (void)applicationDidFinishLaunching:(NSNotification *)aNotification
+{
+    [self initializeMainWindow];
+}
+
+-(void)initializeMainWindow
+{
+    if (![self mainWindowController]) {
+        [self setMainWindowController:[[MainWindowController alloc] initWithWindowNibName:@"MainWindowController"]];
+    }
+    
+    [[[self mainWindowController] window] setRestorable:YES];
+    [[[self mainWindowController] window] setReleasedWhenClosed:NO];
+    
+    [[self mainWindowController] showWindow:self];
+}
+
+-(IBAction)resetTextViews:(id)sender
+{
+    [(NSNotificationCenter *)[NSNotificationCenter defaultCenter] postNotificationName:@"reset_text_views" object:nil];
+}
+
+@end

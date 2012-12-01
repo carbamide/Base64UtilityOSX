@@ -1,0 +1,51 @@
+//
+//  TextView.m
+//  Base64 Utility
+//
+//  Created by Josh Barrow on 3/8/12.
+//  Copyright (c) 2012 ConnectPoint Resolution Systems, Inc. All rights reserved.
+//
+
+#import "TextView.h"
+
+static NSAttributedString *placeHolderString;
+
+@implementation TextView
+
++(void)initialize
+{
+    static BOOL initialized = NO;
+    
+    if (!initialized)
+    {
+        NSColor *txtColor = [NSColor grayColor];
+        
+        NSDictionary *txtDict = [NSDictionary dictionaryWithObjectsAndKeys:txtColor, NSForegroundColorAttributeName, nil];
+        
+        placeHolderString = [[NSAttributedString alloc] initWithString:@"Paste base64 text here" attributes:txtDict];
+    }
+}
+
+-(BOOL)becomeFirstResponder
+{
+    [self setNeedsDisplay:YES];
+    
+    return [super becomeFirstResponder];
+}
+
+-(void)drawRect:(NSRect)rect
+{
+    [super drawRect:rect];
+    
+    if ([[self string] isEqualToString:@""] && self != [[self window] firstResponder]) {
+        [placeHolderString drawAtPoint:NSMakePoint(0,0)];
+    }
+}
+
+-(BOOL)resignFirstResponder
+{
+    [self setNeedsDisplay:YES];
+    return [super resignFirstResponder];
+}
+
+@end
