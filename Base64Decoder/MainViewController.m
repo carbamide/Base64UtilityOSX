@@ -7,7 +7,6 @@
 //
 
 #import "MainViewController.h"
-#import "Base64.h"
 
 @implementation MainViewController
 
@@ -33,22 +32,20 @@
 
 -(void)resetTextViews:(NSNotification *)aNotification
 {
-    [[self decodeTextView] setString:@""];
-    [[self encodeTextView] setString:@""];
+    [[self decodeTextView] setString:[NSString string]];
+    [[self encodeTextView] setString:[NSString string]];
 }
 
 -(IBAction)decodeTextAction:(id)sender
 {
-    NSString *stringToDecode = [NSString stringWithFormat:[[[self decodeTextView] textStorage] string]];
-    
-    [self decodeText:stringToDecode];
+    [self decodeText:[[[self decodeTextView] textStorage] string]];
 }
 
 -(void)decodeText:(NSString *)textToDecode
-{        
-    NSData *decodedData = [Base64 decode:textToDecode];
+{
+    NSData *decodedData = [[NSData alloc] initWithBase64EncodedString:textToDecode options:0];
     
-    [self showSavePanel:decodedData ];
+    [self showSavePanel:decodedData];
 }
 
 -(void)showSavePanel:(NSData *)decodedData
@@ -92,7 +89,7 @@
 }
 
 -(IBAction)chooseFileToEncode:(id)sender
-{    
+{
     NSOpenPanel *openFileDialog = [NSOpenPanel openPanel];
     
     [openFileDialog setCanChooseFiles:YES];
@@ -101,14 +98,13 @@
     
     [openFileDialog beginSheetModalForWindow:[[self view] window] completionHandler:^(NSInteger returnCode) {
         if (returnCode == NSFileHandlingPanelOKButton) {
-            NSString *tempString = [Base64 encode:[NSData dataWithContentsOfURL:[openFileDialog URL]]];
+            NSString *tempString = [[NSData dataWithContentsOfURL:[openFileDialog URL]] base64EncodedStringWithOptions:0];
             
             [[self encodeTextView] setString:tempString];
             
             NSPasteboard *pasteboard = [NSPasteboard generalPasteboard];
             
-            [pasteboard declareTypes:[NSArray arrayWithObjects:NSStringPboardType, nil] owner:nil];
-
+            [pasteboard declareTypes:@[NSStringPboardType] owner:nil];
             [pasteboard setString:tempString forType:NSStringPboardType];
         }
     }];
